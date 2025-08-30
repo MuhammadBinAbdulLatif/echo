@@ -15,7 +15,7 @@ export const useVapi = ()=> {
 
     // The reason for using the state for the purpose of VAPI integration is because every user can bring their api keys
     useEffect(()=> {
-        const vapiInstacne = new Vapi('9ad6cd98-9997-4829-a870-c6298a0b5684') // only for testing the VAPI api other wise customers will provider thier own api keys.
+        const vapiInstacne = new Vapi("") // only for testing the VAPI api other wise customers will provider thier own api keys.
         setVapi(vapiInstacne);
         // good to know isn't it. If yes, please follow me on github
         vapiInstacne.on('call-start', ()=> {
@@ -50,7 +50,7 @@ export const useVapi = ()=> {
     const startCall = ()=> {
         setIsConnecting(true);
        if(vapi) {
-        vapi.start("0917cc7b-13dc-4e3f-ab1c-e406757de042");// only for testing the VAPI api other wise customers will provider thier own assistant ids which will be custom ones
+        vapi.start("");// only for testing the VAPI api other wise customers will provider thier own assistant ids which will be custom ones
        }
 
 
