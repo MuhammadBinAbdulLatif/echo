@@ -1,16 +1,18 @@
 'use client'
-import {useQuery} from 'convex/react'
 import { Button } from "@workspace/ui/components/button"
-import {api} from "@workspace/backend/convex/_generated/api"
+import { useVapi } from '@/hooks/use-vapi'
 export default function Page() {
-  const users = useQuery(api.users.getManyUsers)
+  const { isSpeaking, isConnecting, isConnected, transcript, startCall, endCall } = useVapi()
   return (
-    <div className="flex items-center justify-center min-h-svh">
-      <div className="flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">Hello World</h1>
-        <div className='flex flex-col gap-y-4 text-center max-w-sm'>{JSON.stringify(users, null, 2)}</div>
-        <Button size="sm">Button</Button>
-      </div>
+    <div className="flex items-center justify-center min-h-svh max-w-md mx-auto w-full flex-col ">
+     <Button onClick={()=> startCall()}>Start Call</Button>
+     <Button onClick={()=> endCall()}>End Call</Button>
+     <p>
+      isConnected: {isConnected ? 'true': 'false'} <br/>
+      isConnecting: {isConnecting ? 'true': 'false'} <br/>
+      isSpeaking: {isSpeaking ? 'true': 'false'} <br/>
+      {JSON.stringify(transcript, null, 2)}
+     </p>
     </div>
   )
 }
