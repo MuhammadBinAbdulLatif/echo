@@ -1,14 +1,14 @@
-'use client'
+'use server'
 import React from 'react'
-import { useOrganization } from '@clerk/nextjs'
+import { auth } from '@clerk/nextjs/server';
 import CreateOrganization from './create-organizaiton'
 type Props = {
     children: React.ReactNode
 }
 
-const OrganizationGuard = ({children}: Props) => {
-    const {organization} = useOrganization()
-    if(!organization){
+const OrganizationGuard = async ({children}: Props) => {
+    const {orgId} = await auth()
+    if(!orgId){
         return (
             <CreateOrganization />
         )
