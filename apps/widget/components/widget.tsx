@@ -5,6 +5,8 @@ import React from 'react'
 import WidgetOnboardScreen from './screens/widget-onboard-screen'
 import { screenAtom } from '@/atoms/widget-atoms';
 import { useAtomValue } from 'jotai';
+import WidgetErrorScreen from './screens/widget-error-screen';
+import WidgetLoadingScreen from './screens/widget-loading';
 interface Props {
     organizationId: string
 }
@@ -21,8 +23,8 @@ type ScreenKey =
 function Widget({ organizationId }: Props) {
   const screen = useAtomValue(screenAtom) as ScreenKey;
   const screenComponents: Record<ScreenKey, React.ReactElement> = {
-    error: <p>TODO: Error</p>,
-    loading: <p>TODO: Loading</p>,
+    loading: <WidgetLoadingScreen organizationId={organizationId} />,
+    error: <WidgetErrorScreen />,
     auth: <WidgetOnboardScreen />,
     voice: <p>TODO: Voice</p>,
     inbox: <p>TODO: Inbox</p>,

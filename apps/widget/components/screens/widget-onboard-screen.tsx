@@ -19,6 +19,11 @@ import { useMutation } from "convex/react";
 import { api } from "@workspace/backend/convex/_generated/api";
 import { Doc } from "@workspace/backend/convex/_generated/dataModel";
 import { Loader2 } from "lucide-react";
+import { useAtomValue, useSetAtom } from "jotai";
+import {
+  contactSessionIdAtomFamily,
+  organizationIdAtom,
+} from "@/atoms/widget-atoms";
 
 const WidgetOnboardScreen = () => {
   // ✅ Add validation rules
@@ -27,7 +32,6 @@ const WidgetOnboardScreen = () => {
     email: z.string().email("Invalid email").min(1, "Email is required"),
   });
 
-  const organizationId = "64a7f0f4c9e77b001f8b4567"; // TODO: replace after state management
   const createContactSession = useMutation(api.public.contactSessions.create);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -37,8 +41,15 @@ const WidgetOnboardScreen = () => {
       email: "",
     },
   });
+  const organizationId = useAtomValue(organizationIdAtom);
+  const setContactSessionId = useSetAtom(
+      contactSessionIdAtomFamily(organizationId || "")
+    );
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    
+    
+
     if (!organizationId) return;
 
     const metadata: Doc<"contactSessions">["metadata"] = {
@@ -55,14 +66,14 @@ const WidgetOnboardScreen = () => {
       referrer: document.referrer || "direct",
       currentUrl: window.location.href,
     };
-
+    
     const contactSessionId = await createContactSession({
       ...values,
       organizationId,
       metadata,
     });
+    setContactSessionId(contactSessionId);
 
-    console.log({ contactSessionId });
   }
 
   function onReset() {
@@ -128,7 +139,11 @@ const WidgetOnboardScreen = () => {
 
             {/* Button with loader */}
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? <Loader2 className="size-8 animate-spin" /> : "Continue"}
+              {form.formState.isSubmitting ? (
+                <Loader2 className="size-8 animate-spin" />
+              ) : (
+                "Continue"
+              )}
             </Button>
           </div>
         </form>
