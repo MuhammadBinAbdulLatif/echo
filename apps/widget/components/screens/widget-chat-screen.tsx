@@ -22,10 +22,12 @@ import { AIMessage, AIMessageContent } from "@workspace/ui/components/ai/message
 import { AISuggestion, AISuggestions } from "@workspace/ui/components/ai/suggestion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {z} from "zod"
+import {DiceBearAvatar} from '@workspace/ui/components/dicebear-avatar'
 import { useForm } from "react-hook-form";
 import { AIResponse } from "@workspace/ui/components/ai/response";
 import { Form, FormField } from "@workspace/ui/components/form";
-
+import {useInfiniteScroll} from '@workspace/ui/hooks/use-infinite-scroll'
+import InfiniteScrollTrigger from '@workspace/ui/components/infinite-scroll-trigger'
 const formSchema = z.object({
   message: z.string().min(2,{message: "Message must be at least 2 characters long"}).nonempty(),
 })
@@ -39,6 +41,7 @@ function WidgetChatScreen() {
       message: ""
     }
   })
+  
   const conversationId = useAtomValue(conversationIdAtom);
   const organizationId = useAtomValue(organizationIdAtom);
   const contactSessionId = useAtomValue(
@@ -67,7 +70,6 @@ function WidgetChatScreen() {
       prompt:values.message,
       contactSessionId
     })
-   
 
   }
 
@@ -76,6 +78,12 @@ function WidgetChatScreen() {
     contactSessionId: contactSessionId
   } : "skip", {
     initialNumItems: 10
+  })
+  const {topElementRef, handleLoadMore, canLoadMore, isLoadingMore} = useInfiniteScroll({
+    loadMore: messages.loadMore,
+    status: messages.status,
+    loadSize: 10,
+    observerEnabled: true
   })
 
   const onBack = ()=> {
@@ -97,6 +105,7 @@ function WidgetChatScreen() {
       </WidgetHeader>
      <AIConversation>
       <AIConversationContent>
+        <InfiniteScrollTrigger canLoadMore={canLoadMore} noMoreText="No more items to show"  isLoadingMore={isLoadingMore} ref={topElementRef} onLoadMore={handleLoadMore}  />
         {toUIMessages(messages.results ?? [])?.map((message)=> {
           return (
             <AIMessage from={message.role === 'user' ? 'user': 'assistant'}
@@ -106,7 +115,10 @@ function WidgetChatScreen() {
                   {message.text}
                 </AIResponse>
               </AIMessageContent>
-              {/* TODO: Create custom avatar component */}
+             {message.role === 'assistant' && (
+              //TODO: When not sleepy know how to add the image
+              <DiceBearAvatar seed="assistant" size={32} />
+             )}
             </AIMessage>
           )
         })}

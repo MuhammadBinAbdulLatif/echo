@@ -23,9 +23,11 @@ import { useAtomValue, useSetAtom } from "jotai";
 import {
   contactSessionIdAtomFamily,
   organizationIdAtom,
+  screenAtom,
 } from "@/atoms/widget-atoms";
 
 const WidgetOnboardScreen = () => {
+  const setScreen = useSetAtom(screenAtom)
   // ✅ Add validation rules
   const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -73,6 +75,7 @@ const WidgetOnboardScreen = () => {
       metadata,
     });
     setContactSessionId(contactSessionId);
+    setScreen('selection')
 
   }
 
