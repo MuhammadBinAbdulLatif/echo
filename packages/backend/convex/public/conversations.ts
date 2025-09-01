@@ -1,8 +1,9 @@
 import { mutation, query } from "../_generated/server.js";
 import { ConvexError, v } from "convex/values";
 import { agent } from "../system/ai/agents/supportAgent.js";
-import { saveMessage } from "@convex-dev/agent";
+import { MessageDoc, saveMessage } from "@convex-dev/agent";
 import { components } from "../_generated/api.js";
+import { paginationOptsValidator } from "convex/server";
 
 export const create = mutation({
   args: {
@@ -73,3 +74,46 @@ export const getOne = query({
     }
   },
 });
+
+
+const getMany = query({
+  args: {
+    contactSessionId: v.id('contactSessions'),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, arg)=> {
+    const contactSession = await ctx.db.get(arg.contactSessionId);
+    if (!contactSession || contactSession.expiresAt < Date.now()) {
+      throw new ConvexError({
+        code: "UNAUTHORIZIED",
+        message: "Invalid Session",
+      });
+    }
+    const conversations = await ctx.db.query('conversations').withIndex('by_contact_session_id', (q)=> q.eq('contactSessionId', arg.contactSessionId)).order('desc').paginate(arg.paginationOpts)
+
+    const conversationWithLastMessage = await Promise.all(conversations.page.map(async (conversation)=> {
+      let lastMessage: MessageDoc | null = null;
+      const messages = await agent.listMessages(ctx, {
+        threadId: conversation.threadId,
+        paginationOpts: {numItems: 1, cursor: null}
+      })
+      if(messages.page.length > 0){
+        lastMessage = messages.page[0] ?? null
+      }
+      return {
+        _id: conversation._id,
+        _creationTime: conversation._creationTime,
+        status: conversation.status,
+        organizationId: conversation.organizationId,
+        threadId: conversation.threadId,
+        lastMessage: lastMessage
+      }
+    })
+  
+  );
+  return {
+    ...conversations,
+    page: conversationWithLastMessage
+  };
+  }
+})

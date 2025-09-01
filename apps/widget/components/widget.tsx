@@ -9,6 +9,7 @@ import WidgetErrorScreen from './screens/widget-error-screen';
 import WidgetLoadingScreen from './screens/widget-loading';
 import WidgetSelectionScreen from './screens/widget-selection-screen';
 import WidgetChatScreen from './screens/widget-chat-screen';
+import WidgetInboxScreen from './screens/widget-error-screen';
 interface Props {
     organizationId: string
 }
@@ -29,7 +30,7 @@ function Widget({ organizationId }: Props) {
     error: <WidgetErrorScreen />,
     auth: <WidgetOnboardScreen />,
     voice: <p>TODO: Voice</p>,
-    inbox: <p>TODO: Inbox</p>,
+    inbox: <WidgetInboxScreen />,
     selection:<WidgetSelectionScreen />,
     chat: <WidgetChatScreen />,
     contact: <p>TODO: Contact</p>,
