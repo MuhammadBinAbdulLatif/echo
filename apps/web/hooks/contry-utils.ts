@@ -16,3 +16,7 @@ export function getCountryFromTimezone(timezone?:string){
         name: country?.name || countryCode
     }
 }
+
+export function getCountryFlagUrl(contryCode: string) {
+    return `https://flagcdn.com/w40/${contryCode.toLowerCase()}.png`
+}
