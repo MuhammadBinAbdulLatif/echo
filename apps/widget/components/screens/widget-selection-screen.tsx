@@ -9,6 +9,7 @@ import {  ChevronRightIcon, MessageSquareTextIcon } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { useMutation } from "convex/react"
 import { api } from "@workspace/backend/convex/_generated/api"
+import WidgetFooter from "../widget-footer"
 
 function WidgetSelectionScreen() {
   const [isPending, setIsPending] = useState(false)
@@ -57,6 +58,7 @@ function WidgetSelectionScreen() {
         <ChevronRightIcon className="size-4" />
        </Button>
       </div>
+      <WidgetFooter />
     </>
   )
 }

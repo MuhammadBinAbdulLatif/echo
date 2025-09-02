@@ -18,11 +18,8 @@ function WidgetErrorScreen() {
           <p className="text-lg">Let's get you started!</p>
         </div>
       </WidgetHeader>
-      <div className="flex flex-1 items-center justify-center gap-y-4 p-4 flex-col text-muted-foreground">
-        <AlertTriangleIcon />
-        <p>
-            {errorMessage || 'Invalid Configuration'}
-        </p>
+      <div className="flex flex-1  gap-y-4 p-4 flex-col ">
+        
       </div>
     </>
   )
