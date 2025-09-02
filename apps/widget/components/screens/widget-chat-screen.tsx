@@ -105,7 +105,7 @@ function WidgetChatScreen() {
       </WidgetHeader>
      <AIConversation>
       <AIConversationContent>
-        <InfiniteScrollTrigger canLoadMore={canLoadMore} noMoreText="No more items to show"  isLoadingMore={isLoadingMore} ref={topElementRef} onLoadMore={handleLoadMore}  />
+        <InfiniteScrollTrigger canLoadMore={canLoadMore} noMoreText="No more items to show" loadMoreText="Load more..."  isLoadingMore={isLoadingMore} ref={topElementRef} onLoadMore={handleLoadMore}  />
         {toUIMessages(messages.results ?? [])?.map((message)=> {
           return (
             <AIMessage from={message.role === 'user' ? 'user': 'assistant'}

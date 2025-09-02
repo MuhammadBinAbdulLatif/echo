@@ -7,7 +7,7 @@ import React from 'react'
 import WidgetHeader from "../widget-header"
 import { AlertTriangleIcon } from "lucide-react"
 
-function WidgetInboxScreen() {
+function WidgetErrorScreen() {
     const errorMessage = useAtomValue(errorMessageAtom)
 
   return (
@@ -25,4 +25,4 @@ function WidgetInboxScreen() {
   )
 }
 
-export default WidgetInboxScreen
+export default WidgetErrorScreen

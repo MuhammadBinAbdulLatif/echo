@@ -26,7 +26,7 @@ export const DiceBearAvatar  = ({seed, className, size, badgeClassName, imageUrl
             size
         })
         return avatar.toDataUri()
-    }, [seed, size])
+    }, [seed, size, imageUrl])
     const badgeSize = Math.round(size * 0.5);
     return (
         <div className="relative inline-block" style={{width: size, height: size}}>

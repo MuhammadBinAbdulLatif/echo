@@ -60,7 +60,7 @@ export const getOne = query({
          code: "NOT_FOUND",
         message: "Conversation Not Found",
       })
-    }
+    } 
     if (conversation.contactSessionId !== session._id) {
       throw new ConvexError({
          code: "UNAUTHORIZIED",
@@ -76,7 +76,7 @@ export const getOne = query({
 });
 
 
-const getMany = query({
+export const getMany = query({
   args: {
     contactSessionId: v.id('contactSessions'),
     paginationOpts: paginationOptsValidator,
