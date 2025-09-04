@@ -107,6 +107,11 @@ function WidgetChatScreen() {
       <AIConversationContent>
         <InfiniteScrollTrigger canLoadMore={canLoadMore} noMoreText="No more items to show" loadMoreText="Load more..."  isLoadingMore={isLoadingMore} ref={topElementRef} onLoadMore={handleLoadMore}  />
         {toUIMessages(messages.results ?? [])?.map((message)=> {
+          // Skip empty messages to prevent UI issues
+          if (!message.text || message.text.trim() === '') {
+            return null;
+          }
+          
           return (
             <AIMessage from={message.role === 'user' ? 'user': 'assistant'}
             key={message.id}>
@@ -116,7 +121,6 @@ function WidgetChatScreen() {
                 </AIResponse>
               </AIMessageContent>
              {message.role === 'assistant' && (
-              //TODO: When not sleepy know how to add the image
               <DiceBearAvatar seed="assistant" size={32} />
              )}
             </AIMessage>
