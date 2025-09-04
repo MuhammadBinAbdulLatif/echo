@@ -1,9 +1,11 @@
 import { ConvexError, v } from "convex/values";
-import {  mutation, query } from "../_generated/server.js";
+import {  action, mutation, query } from "../_generated/server.js";
 import { components, internal } from "../_generated/api.js";
 import { agent } from "../system/ai/agents/supportAgent.js";
 import { paginationOptsValidator } from "convex/server";
 import { saveMessage } from "@convex-dev/agent";
+import { generateText } from "ai";
+import { google } from "@ai-sdk/google";
 
 export const create = mutation({
   args: {
@@ -102,3 +104,40 @@ export const getMany = query({
     return paginated;
   },
 });
+
+
+export const enhance = action({
+  args: {
+    prompt: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "The user is not logged in ",
+      });
+    }
+    const orgId = identity.orgId as string;
+    if (!orgId) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "No organization Id found",
+      });
+    }
+
+    const response = await generateText({
+      model: google.chat('gemini-1.5-flash'),
+      messages: [
+        {
+          role: 'system',
+          content: "Enchacne the message of the operator to be more professional, clear and helpful while maintaining their intent and key information. Return nothing but the direct answer that will be sent to the user.  "
+        }, {
+          role: 'user',
+          content: `This is the message of the operator: ${args.prompt}`
+        }
+      ]
+    })
+    return response.text;
+  } 
+})
