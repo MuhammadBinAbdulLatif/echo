@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import {  action, mutation, query } from "../_generated/server.js";
+import { action, mutation, query } from "../_generated/server.js";
 import { components, internal } from "../_generated/api.js";
 import { agent } from "../system/ai/agents/supportAgent.js";
 import { paginationOptsValidator } from "convex/server";
@@ -13,7 +13,7 @@ export const create = mutation({
     conversationId: v.id("conversations"),
   },
   handler: async (ctx, arg) => {
-     const identity = await ctx.auth.getUserIdentity();
+    const identity = await ctx.auth.getUserIdentity();
     if (identity === null) {
       throw new ConvexError({
         code: "UNAUTHORIZED",
@@ -29,18 +29,18 @@ export const create = mutation({
     }
 
     // get the contact session
-    const conversation = await ctx.db.get(arg.conversationId)
+    const conversation = await ctx.db.get(arg.conversationId);
     if (!conversation) {
       throw new ConvexError({
         code: "NOT_FOUND",
         message: "The conversation is invalid or does not exist.",
       });
     }
-    if(conversation.organizationId !== orgId){
-        throw new ConvexError({
-            code: 'UNAUTHORIZED',
-            message: 'Invalid Organization id'
-        })
+    if (conversation.organizationId !== orgId) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Invalid Organization id",
+      });
     }
     if (conversation.status === "resolved") {
       throw new ConvexError({
@@ -48,15 +48,20 @@ export const create = mutation({
         message: "The conversation has already been resolved.",
       });
     }
-    // TODO: Implement subscription check / subscription paywall
-   await saveMessage(ctx, components.agent, {
-    threadId:conversation.threadId,
-    agentName: identity.familyName,
-    message: {
-        role: 'assistant',
-        content: arg.prompt
+
+    if (conversation.status === "unresolved") {
+      await ctx.db.patch(conversation._id, { status: "escalated" });
     }
-   })
+
+    // TODO: Implement subscription check / subscription paywall
+    await saveMessage(ctx, components.agent, {
+      threadId: conversation.threadId,
+      agentName: identity.familyName,
+      message: {
+        role: "assistant",
+        content: arg.prompt,
+      },
+    });
   },
 });
 
@@ -105,7 +110,6 @@ export const getMany = query({
   },
 });
 
-
 export const enhance = action({
   args: {
     prompt: v.string(),
@@ -127,17 +131,19 @@ export const enhance = action({
     }
 
     const response = await generateText({
-      model: google.chat('gemini-1.5-flash'),
+      model: google.chat("gemini-1.5-flash"),
       messages: [
         {
-          role: 'system',
-          content: "Enchacne the message of the operator to be more professional, clear and helpful while maintaining their intent and key information. Return nothing but the direct answer that will be sent to the user.  "
-        }, {
-          role: 'user',
-          content: `This is the message of the operator: ${args.prompt}`
-        }
-      ]
-    })
+          role: "system",
+          content:
+            "Enchacne the message of the operator to be more professional, clear and helpful while maintaining their intent and key information. Return nothing but the direct answer that will be sent to the user.  ",
+        },
+        {
+          role: "user",
+          content: `This is the message of the operator: ${args.prompt}`,
+        },
+      ],
+    });
     return response.text;
-  } 
-})
+  },
+});
