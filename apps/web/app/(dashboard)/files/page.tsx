@@ -1,11 +1,8 @@
-import React from 'react'
+import FilesView from "@/components/dashboard/files/files-view";
+import React from "react";
 
 function page() {
-  return (
-    <div>
-      Files
-    </div>
-  )
+  return <FilesView />;
 }
 
-export default page
+export default page;
