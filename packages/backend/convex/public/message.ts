@@ -6,6 +6,7 @@ import { paginationOptsValidator } from "convex/server";
 import { resolveConversation } from "../system/ai/tools/resolveConversation.js";
 import { escalateConversation } from "../system/ai/tools/escalateConversation.js";
 import { saveMessage } from "@convex-dev/agent";
+import { search } from "../system/ai/tools/search.js";
 
 export const create = action({
   args: {
@@ -41,28 +42,29 @@ export const create = action({
         message: "The conversation has already been resolved.",
       });
     }
-    const shouldTriggerAgent = conversation.status === 'unresolved'
+    const shouldTriggerAgent = conversation.status === "unresolved";
     // TODO: Implement subscription check / subscription paywall
-    
-    if(shouldTriggerAgent){
+
+    if (shouldTriggerAgent) {
       await agent.generateText(
-      ctx,
-      {
-        threadId: arg.threadId,
-      },
-      {
-        prompt: arg.prompt,
-        tools: {
-          resolveConversation,
-          escalateConversation,
+        ctx,
+        {
+          threadId: arg.threadId,
         },
-      }
-    );
+        {
+          prompt: arg.prompt,
+          tools: {
+            resolveConversation,
+            escalateConversation,
+            search,
+          },
+        }
+      );
     } else {
-      await saveMessage(ctx,components.agent, {
+      await saveMessage(ctx, components.agent, {
         threadId: arg.threadId,
-        prompt: arg.prompt
-      })
+        prompt: arg.prompt,
+      });
     }
   },
 });
