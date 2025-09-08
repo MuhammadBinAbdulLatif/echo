@@ -1,11 +1,8 @@
-import React from 'react'
+import { VapiView } from "@/components/dashboard/plugins/vapi-view";
+import React from "react";
 
 function page() {
-  return (
-    <div>
-      Vapi
-    </div>
-  )
+  return <VapiView />;
 }
 
-export default page
+export default page;
