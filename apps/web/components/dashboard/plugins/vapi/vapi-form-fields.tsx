@@ -94,7 +94,7 @@ export const VapiFormFields = ({ form }: VapiFomrFieldsProps) => {
               <SelectContent>
                 <SelectItem value="none"></SelectItem>
                 {phoneNumbers?.map((number) => (
-                  <SelectItem key={number.id} value={number.id}>
+                  <SelectItem key={number.id} value={number.number}>
                     {number.number || "Not recieved number"}{" "}
                     {number.name || "Unnamed"}
                   </SelectItem>
