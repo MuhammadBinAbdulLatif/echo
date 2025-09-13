@@ -19,17 +19,25 @@ export const create = mutation({
       });
     }
     // an example thread, replace when functionality for thread creation is in place
-    const {threadId} = await agent.createThread(ctx,{
-      userId: arg.organizationId
-    })
+    const { threadId } = await agent.createThread(ctx, {
+      userId: arg.organizationId,
+    });
+    const widgetSettings = await ctx.db
+      .query("widgetSettings")
+      .withIndex("by_organization_id", (q) =>
+        q.eq("organizationId", arg.organizationId)
+      )
+      .unique();
     await saveMessage(ctx, components.agent, {
       threadId,
       message: {
-        role: 'assistant',
-        // TODO: add the custom one for the user
-        content: 'How can i help you today'
-      }
-    })
+        role: "assistant",
+
+        content: widgetSettings
+          ? widgetSettings.greetMessage
+          : "How can i help you today",
+      },
+    });
     // Create the conversation
     const conversationId = await ctx.db.insert("conversations", {
       contactSessionId: session._id,
@@ -55,33 +63,32 @@ export const getOne = query({
       });
     }
     const conversation = await ctx.db.get(arg.conversationId);
-    if(!conversation){
-         throw new ConvexError({
-         code: "NOT_FOUND",
+    if (!conversation) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
         message: "Conversation Not Found",
-      })
-    } 
+      });
+    }
     if (conversation.contactSessionId !== session._id) {
       throw new ConvexError({
-         code: "UNAUTHORIZIED",
+        code: "UNAUTHORIZIED",
         message: "Incorrect Session",
-      })
+      });
     }
     return {
-        _id: conversation._id,
-        status: conversation.status,
-        threadId:conversation.threadId
-    }
+      _id: conversation._id,
+      status: conversation.status,
+      threadId: conversation.threadId,
+    };
   },
 });
 
-
 export const getMany = query({
   args: {
-    contactSessionId: v.id('contactSessions'),
+    contactSessionId: v.id("contactSessions"),
     paginationOpts: paginationOptsValidator,
   },
-  handler: async (ctx, arg)=> {
+  handler: async (ctx, arg) => {
     const contactSession = await ctx.db.get(arg.contactSessionId);
     if (!contactSession || contactSession.expiresAt < Date.now()) {
       throw new ConvexError({
@@ -89,31 +96,37 @@ export const getMany = query({
         message: "Invalid Session",
       });
     }
-    const conversations = await ctx.db.query('conversations').withIndex('by_contact_session_id', (q)=> q.eq('contactSessionId', arg.contactSessionId)).order('desc').paginate(arg.paginationOpts)
+    const conversations = await ctx.db
+      .query("conversations")
+      .withIndex("by_contact_session_id", (q) =>
+        q.eq("contactSessionId", arg.contactSessionId)
+      )
+      .order("desc")
+      .paginate(arg.paginationOpts);
 
-    const conversationWithLastMessage = await Promise.all(conversations.page.map(async (conversation)=> {
-      let lastMessage: MessageDoc | null = null;
-      const messages = await agent.listMessages(ctx, {
-        threadId: conversation.threadId,
-        paginationOpts: {numItems: 1, cursor: null}
+    const conversationWithLastMessage = await Promise.all(
+      conversations.page.map(async (conversation) => {
+        let lastMessage: MessageDoc | null = null;
+        const messages = await agent.listMessages(ctx, {
+          threadId: conversation.threadId,
+          paginationOpts: { numItems: 1, cursor: null },
+        });
+        if (messages.page.length > 0) {
+          lastMessage = messages.page[0] ?? null;
+        }
+        return {
+          _id: conversation._id,
+          _creationTime: conversation._creationTime,
+          status: conversation.status,
+          organizationId: conversation.organizationId,
+          threadId: conversation.threadId,
+          lastMessage: lastMessage,
+        };
       })
-      if(messages.page.length > 0){
-        lastMessage = messages.page[0] ?? null
-      }
-      return {
-        _id: conversation._id,
-        _creationTime: conversation._creationTime,
-        status: conversation.status,
-        organizationId: conversation.organizationId,
-        threadId: conversation.threadId,
-        lastMessage: lastMessage
-      }
-    })
-  
-  );
-  return {
-    ...conversations,
-    page: conversationWithLastMessage
-  };
-  }
-})
+    );
+    return {
+      ...conversations,
+      page: conversationWithLastMessage,
+    };
+  },
+});
