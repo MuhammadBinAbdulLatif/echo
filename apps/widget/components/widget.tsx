@@ -1,27 +1,28 @@
-'use client'
-import React from 'react'
+"use client";
+import React from "react";
 // import WidgetFooter from './widget-footer'
 // import WidgetHeader from './widget-header'
-import WidgetOnboardScreen from './screens/widget-onboard-screen'
-import { screenAtom } from '@/atoms/widget-atoms';
-import { useAtomValue } from 'jotai';
-import WidgetErrorScreen from './screens/widget-error-screen';
-import WidgetLoadingScreen from './screens/widget-loading';
-import WidgetSelectionScreen from './screens/widget-selection-screen';
-import WidgetChatScreen from './screens/widget-chat-screen';
-import WidgetInboxScreen from './screens/widget-inbox-screen';
+import WidgetOnboardScreen from "./screens/widget-onboard-screen";
+import { screenAtom } from "@/atoms/widget-atoms";
+import { useAtomValue } from "jotai";
+import WidgetErrorScreen from "./screens/widget-error-screen";
+import WidgetLoadingScreen from "./screens/widget-loading";
+import WidgetSelectionScreen from "./screens/widget-selection-screen";
+import WidgetChatScreen from "./screens/widget-chat-screen";
+import WidgetInboxScreen from "./screens/widget-inbox-screen";
+import { WidgetVoiceScreen } from "./screens/widget-voice-screen";
 interface Props {
-    organizationId: string
+  organizationId: string;
 }
 type ScreenKey =
-  | 'error'
-  | 'loading'
-  | 'auth'
-  | 'voice'
-  | 'inbox'
-  | 'selection'
-  | 'chat'
-  | 'contact';
+  | "error"
+  | "loading"
+  | "auth"
+  | "voice"
+  | "inbox"
+  | "selection"
+  | "chat"
+  | "contact";
 
 function Widget({ organizationId }: Props) {
   const screen = useAtomValue(screenAtom) as ScreenKey;
@@ -29,20 +30,20 @@ function Widget({ organizationId }: Props) {
     loading: <WidgetLoadingScreen organizationId={organizationId} />,
     error: <WidgetErrorScreen />,
     auth: <WidgetOnboardScreen />,
-    voice: <p>TODO: Voice</p>,
+    voice: <WidgetVoiceScreen />,
     inbox: <WidgetInboxScreen />,
-    selection:<WidgetSelectionScreen />,
+    selection: <WidgetSelectionScreen />,
     chat: <WidgetChatScreen />,
     contact: <p>TODO: Contact</p>,
   };
 
   return (
     //TODO: Confirm wether or not min-h and min-w is needed
-    <main className='flex h-full min-h-screen min-w-screen w-full flex-col overflow-hidden rounded-xl border bg-muted text-xl'>
-       {screenComponents[screen]}
+    <main className="flex h-full min-h-screen min-w-screen w-full flex-col overflow-hidden rounded-xl border bg-muted text-xl">
+      {screenComponents[screen]}
       {/* <WidgetFooter /> */}
     </main>
-  )
+  );
 }
 
-export default Widget
+export default Widget;
