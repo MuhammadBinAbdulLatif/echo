@@ -130,6 +130,19 @@ export const enhance = action({
         message: "No organization Id found",
       });
     }
+    const subscription = await ctx.runQuery(
+      internal.system.subscriptions.getByOrganizationId,
+      {
+        organizationId: orgId,
+      }
+    );
+
+    if (subscription?.status !== "active") {
+      throw new ConvexError({
+        code: "BAD_REQUEST",
+        message: "Missing subscription",
+      });
+    }
 
     const response = await generateText({
       model: google.chat("gemini-1.5-flash"),
@@ -145,5 +158,30 @@ export const enhance = action({
       ],
     });
     return response.text;
+  },
+});
+
+export const getSubscriptionByOrganization = query({
+  args: {},
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "The user is not logged in ",
+      });
+    }
+    const orgId = identity.orgId as string;
+    if (!orgId) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "No organization Id found",
+      });
+    }
+    const subscription = await ctx.db
+      .query("subscription")
+      .withIndex("by_organization_id", (q) => q.eq("organizationId", orgId))
+      .unique();
+    return subscription;
   },
 });
