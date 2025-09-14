@@ -1,11 +1,20 @@
-import React from 'react'
+import PricingTable from "@/components/dashboard/billing/pricing-table";
+import React from "react";
 
 function page() {
   return (
-    <div>
-      Billing
+    <div className="flex min-h-screen flex-col bg-muted p-8">
+      <div className="mx-auto w-full max-w-screen">
+        <div className="space-y-2">
+          <h1 className="text-2xl md:text-4xl">Plans & Billing</h1>
+          <p>Choose the plan that is right for you</p>
+        </div>
+        <div className="mt-8">
+          <PricingTable />
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default page
+export default page;
