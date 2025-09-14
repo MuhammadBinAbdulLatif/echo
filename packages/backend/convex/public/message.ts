@@ -7,7 +7,7 @@ import { resolveConversation } from "../system/ai/tools/resolveConversation.js";
 import { escalateConversation } from "../system/ai/tools/escalateConversation.js";
 import { saveMessage } from "@convex-dev/agent";
 import { search } from "../system/ai/tools/search.js";
-
+const AUTO_REFRESH_THRESHOLD_MS = 4 * 60 * 60 * 1000;
 export const create = action({
   args: {
     prompt: v.string(),
@@ -42,7 +42,22 @@ export const create = action({
         message: "The conversation has already been resolved.",
       });
     }
-    const shouldTriggerAgent = conversation.status === "unresolved";
+
+    const timeRemaining = contactSession.expiresAt - Date.now();
+    if (timeRemaining < AUTO_REFRESH_THRESHOLD_MS) {
+      await ctx.runMutation(internal.system.contactSessions.refresh, {
+        contactSessionId: arg.contactSessionId,
+      });
+    }
+
+    const subscription = await ctx.runQuery(
+      internal.system.subscriptions.getByOrganizationId,
+      {
+        organizationId: conversation.organizationId,
+      }
+    );
+    const shouldTriggerAgent =
+      conversation.status === "unresolved" && subscription?.status === "active";
     // TODO: Implement subscription check / subscription paywall
 
     if (shouldTriggerAgent) {

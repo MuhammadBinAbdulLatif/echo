@@ -2,7 +2,7 @@ import { mutation, query } from "../_generated/server.js";
 import { ConvexError, v } from "convex/values";
 import { agent } from "../system/ai/agents/supportAgent.js";
 import { MessageDoc, saveMessage } from "@convex-dev/agent";
-import { components } from "../_generated/api.js";
+import { components, internal } from "../_generated/api.js";
 import { paginationOptsValidator } from "convex/server";
 
 export const create = mutation({
@@ -37,6 +37,10 @@ export const create = mutation({
           ? widgetSettings.greetMessage
           : "How can i help you today",
       },
+    });
+
+    await ctx.runMutation(internal.system.contactSessions.refresh, {
+      contactSessionId: arg.contactSessionId,
     });
     // Create the conversation
     const conversationId = await ctx.db.insert("conversations", {
