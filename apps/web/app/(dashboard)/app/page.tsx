@@ -1,21 +1,46 @@
-'use client'
-import React from 'react'
-import {useQuery} from 'convex/react'
-import { Button } from "@workspace/ui/components/button"
-import {api} from "@workspace/backend/convex/_generated/api"
-function page() {
-  const users = useQuery(api.users.getManyUsers)
+"use client";
+import React from "react";
+import { useQuery } from "convex/react";
+import { Button } from "@workspace/ui/components/button";
+import { api } from "@workspace/backend/convex/_generated/api";
+
+function DashboardPage() {
+  const users = useQuery(api.users.getManyUsers);
+
   return (
-    <div>
-        <div className="flex items-center justify-center min-h-svh">
-      <div className="flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">Hello World</h1>
-        <div className='flex flex-col gap-y-4 text-center max-w-sm'>{JSON.stringify(users, null, 2)}</div>
-        <Button size="sm">Button</Button>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-6">User Management Dashboard</h1>
+      <div className="bg-background rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-4">Users</h2>
+        {users && users.length > 0 ? (
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 border-b">Name</th>
+                <th className="py-2 px-4 border-b">Email</th>
+                <th className="py-2 px-4 border-b">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user: any) => (
+                <tr key={user._id} className="hover:bg-muted">
+                  <td className="py-2 px-4 border-b">{user.name || "-"}</td>
+                  <td className="py-2 px-4 border-b">{user.email || "-"}</td>
+                  <td className="py-2 px-4 border-b">
+                    <Button size="sm" variant="outline">
+                      View
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div className="text-muted-foreground">No users found.</div>
+        )}
       </div>
     </div>
-    </div>
-  )
+  );
 }
 
-export default page
+export default DashboardPage;
