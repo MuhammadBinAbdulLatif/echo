@@ -40,30 +40,29 @@ const customerSupoortItems = [
   },
 ];
 const configurationItems = [
-    {
-        title: "Widget Customization",
-        url: '/customization',
-        icon: PaletteIcon
-    },
-     {
-        title: "Integrations",
-        url: '/integrations',
-        icon: LayoutDashboardIcon
-    },
-     {
-        title: "Voice Assistant",
-        url: '/plugins/vapi',
-        icon: Mic
-    }
-]
+  {
+    title: "Widget Customization",
+    url: "/customization",
+    icon: PaletteIcon,
+  },
+  {
+    title: "Integrations",
+    url: "/integrations",
+    icon: LayoutDashboardIcon,
+  },
+  {
+    title: "Voice Assistant",
+    url: "/plugins/vapi",
+    icon: Mic,
+  },
+];
 const accountItems = [
-    {
-        title: 'Plans & Billing',
-        url: '/billing',
-        icon: CreditCardIcon
-
-    }
-]
+  {
+    title: "Plans & Billing",
+    url: "/Billing",
+    icon: CreditCardIcon,
+  },
+];
 function DashboardSidebar() {
   const pathName = usePathname();
   const isActive = (url: string) => {
@@ -78,16 +77,24 @@ function DashboardSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <OrganizationSwitcher hidePersonal skipInvitationScreen appearance={{
-                elements: {
-                    rootBox: 'w-full! h-8!',
+              <OrganizationSwitcher
+                hidePersonal
+                skipInvitationScreen
+                appearance={{
+                  elements: {
+                    rootBox: "w-full! h-8!",
                     avatarBox: "size-4! rounded-sm!",
-                    organizationSwitcherTrigger: 'w-full! justify-start!  group-data-[collapsible=icon]:size-8!  group-data-[collapsible=icon]:p-2!',
-                    organizationPreview: " group-data-[collapsible=icon]:justify-center! gap-2!",
-                    organizationPreviewTextContainer: 'group-data-[collapsible=icon]:hidden! text-xs! font-medium! text-sidebar-foreground!',
-                    organizationSwitcherTriggerIcon: 'group-data-[collapsible=icon]:hidden! ml-auto! text-sidebar-foreground '
-                }
-              }} />
+                    organizationSwitcherTrigger:
+                      "w-full! justify-start!  group-data-[collapsible=icon]:size-8!  group-data-[collapsible=icon]:p-2!",
+                    organizationPreview:
+                      " group-data-[collapsible=icon]:justify-center! gap-2!",
+                    organizationPreviewTextContainer:
+                      "group-data-[collapsible=icon]:hidden! text-xs! font-medium! text-sidebar-foreground!",
+                    organizationSwitcherTriggerIcon:
+                      "group-data-[collapsible=icon]:hidden! ml-auto! text-sidebar-foreground ",
+                  },
+                }}
+              />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -103,9 +110,10 @@ function DashboardSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.url)}
-                     className={cn(
-                        isActive(item.url) && 'bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90!'
-                     )}
+                    className={cn(
+                      isActive(item.url) &&
+                        "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90!"
+                    )}
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
@@ -118,7 +126,7 @@ function DashboardSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-         <SidebarGroup>
+        <SidebarGroup>
           {/* Customer support */}
           <SidebarGroupLabel>Configuration</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -128,9 +136,10 @@ function DashboardSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.url)}
-                     className={cn(
-                        isActive(item.url) && 'bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90!'
-                     )}
+                    className={cn(
+                      isActive(item.url) &&
+                        "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90!"
+                    )}
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
@@ -153,9 +162,10 @@ function DashboardSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.url)}
-                     className={cn(
-                        isActive(item.url) && 'bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90!'
-                     )}
+                    className={cn(
+                      isActive(item.url) &&
+                        "bg-gradient-to-b from-sidebar-primary to-[#0b63f3]! text-sidebar-primary-foreground! hover:to-[#0b63f3]/90!"
+                    )}
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
@@ -171,17 +181,23 @@ function DashboardSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-            <SidebarMenuItem>
-             <UserButton showName appearance={{
+          <SidebarMenuItem>
+            <UserButton
+              showName
+              appearance={{
                 elements: {
-                    rootBox: 'w-full! h-8!',
-                    userButtonTrigger: 'w-full! p-2! hover:bg-sidebar-accent! hover:text-sidebar-accent-foreground! group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!',
-                   userButtonBox: 'w-full! flex-row-reverse! justify-end! gap-2! group-data-[collapsible=icon]:justify-center! text-sidebar-foreground!',
-                   userButtonOuterIdentifier: 'pl-0!  group-data-[collapsible=icon]:hidden!',
-                   avatarBox: 'group-data-[collapsible=icon]:size-4!' 
-                }
-              }} />
-            </SidebarMenuItem>
+                  rootBox: "w-full! h-8!",
+                  userButtonTrigger:
+                    "w-full! p-2! hover:bg-sidebar-accent! hover:text-sidebar-accent-foreground! group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!",
+                  userButtonBox:
+                    "w-full! flex-row-reverse! justify-end! gap-2! group-data-[collapsible=icon]:justify-center! text-sidebar-foreground!",
+                  userButtonOuterIdentifier:
+                    "pl-0!  group-data-[collapsible=icon]:hidden!",
+                  avatarBox: "group-data-[collapsible=icon]:size-4!",
+                },
+              }}
+            />
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />

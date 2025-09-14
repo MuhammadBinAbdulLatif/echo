@@ -59,6 +59,12 @@ export default function MarketingPage() {
               >
                 Sign In
               </Link>
+              <Link
+                href="/conversations"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Dashboard
+              </Link>
             </nav>
 
             <div className="flex items-center space-x-4">
